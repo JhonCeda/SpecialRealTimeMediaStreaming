@@ -54,41 +54,47 @@ class hjStreamServer {
 		// You can read (frame by frame to transmit ...
 		// But you must folow the "real-time" encoding conditions
 
-		while ((size = g.readShort()) > 0) { // read frame size
-			time = g.readLong(); // read timestamp
-			g.readFully(buff, 0, size);
-			count++;
-			csize += size;
+		try {
+			while ((size = g.readShort()) > 0) { // read frame size
+				time = g.readLong(); // read timestamp
+				g.readFully(buff, 0, size);
+				count++;
+				csize += size;
 
-			// Encrypt frame if encryption is enabled
-			byte[] frameData = buff;
-			int frameSize = size;
-			if (encryption != null) {
-				try {
-					byte[] plaintext = new byte[size];
-					System.arraycopy(buff, 0, plaintext, 0, size);
-					frameData = encryption.encrypt(plaintext);
-					frameSize = frameData.length;
-				} catch (Exception e) {
-					System.err.println("Encryption error: " + e.getMessage());
-					System.exit(-1);
+				// Encrypt frame if encryption is enabled
+				byte[] frameData = buff;
+				int frameSize = size;
+				if (encryption != null) {
+					try {
+						byte[] plaintext = new byte[size];
+						System.arraycopy(buff, 0, plaintext, 0, size);
+						frameData = encryption.encrypt(plaintext);
+						frameSize = frameData.length;
+					} catch (Exception e) {
+						System.err.println("Encryption error: " + e.getMessage());
+						System.exit(-1);
+					}
 				}
+
+				p.setData(frameData, 0, frameSize);
+				p.setSocketAddress(addr);
+
+				long t = System.nanoTime(); // what time is it?
+
+				// Decision about the right time to transmit
+				Thread.sleep(Math.max(0, ((time - q0) - (t - t0)) / 1000000));
+
+				// send datagram (udp packet) w/ payload frame)
+				s.send(p);
+
+				// Just for awareness ... (debug)
+
+				System.out.print(":");
 			}
-
-			p.setData(frameData, 0, frameSize);
-			p.setSocketAddress(addr);
-
-			long t = System.nanoTime(); // what time is it?
-
-			// Decision about the right time to transmit
-			Thread.sleep(Math.max(0, ((time - q0) - (t - t0)) / 1000000));
-
-			// send datagram (udp packet) w/ payload frame)
-			s.send(p);
-
-			// Just for awareness ... (debug)
-
-			System.out.print(":");
+		} catch (java.io.EOFException e) {
+			// End of file reached - this is normal
+			System.out.println();
+			System.out.println("End of stream reached");
 		}
 
 		long tend = System.nanoTime(); // "The end" time

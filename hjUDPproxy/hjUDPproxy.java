@@ -30,37 +30,37 @@ import java.util.stream.Collectors;
 
 class hjUDPproxy {
     public static void main(String[] args) throws Exception {
-        InputStream inputStream = new FileInputStream("config.properties");
+        String configPath = args.length > 0 ? args[0] : "hjUDPproxy/config.properties";
+        InputStream inputStream = new FileInputStream(configPath);
         if (inputStream == null) {
             System.err.println("Configuration file not found!");
             System.exit(1);
         }
         Properties properties = new Properties();
         properties.load(inputStream);
-	String remote = properties.getProperty("remote");
+        String remote = properties.getProperty("remote");
         String destinations = properties.getProperty("localdelivery");
 
         SocketAddress inSocketAddress = parseSocketAddress(remote);
-        Set<SocketAddress> outSocketAddressSet = Arrays.stream(destinations.split(",")).map(s -> parseSocketAddress(s)).collect(Collectors.toSet());
+        Set<SocketAddress> outSocketAddressSet = Arrays.stream(destinations.split(",")).map(s -> parseSocketAddress(s))
+                .collect(Collectors.toSet());
 
-	DatagramSocket inSocket = new DatagramSocket(inSocketAddress); 
+        DatagramSocket inSocket = new DatagramSocket(inSocketAddress);
         DatagramSocket outSocket = new DatagramSocket();
         byte[] buffer = new byte[4 * 1024];
-       
-        while (true) {
-          DatagramPacket inPacket = new DatagramPacket(buffer, buffer.length);
- 	  inSocket.receive(inPacket);  // if remote is unicast
 
-          System.out.print(".");
-          for (SocketAddress outSocketAddress : outSocketAddressSet) 
-            {
-              outSocket.send(new DatagramPacket(buffer, inPacket.getLength(), outSocketAddress));
+        while (true) {
+            DatagramPacket inPacket = new DatagramPacket(buffer, buffer.length);
+            inSocket.receive(inPacket); // if remote is unicast
+
+            System.out.print(".");
+            for (SocketAddress outSocketAddress : outSocketAddressSet) {
+                outSocket.send(new DatagramPacket(buffer, inPacket.getLength(), outSocketAddress));
             }
         }
     }
 
-    private static InetSocketAddress parseSocketAddress(String socketAddress) 
-    {
+    private static InetSocketAddress parseSocketAddress(String socketAddress) {
         String[] split = socketAddress.split(":");
         String host = split[0];
         int port = Integer.parseInt(split[1]);

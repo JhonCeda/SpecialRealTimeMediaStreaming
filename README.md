@@ -27,13 +27,14 @@ Choose an algorithm and copy the key to `config.properties`.
 
 **Terminal 1 - Stream Server:**
 ```bash
-java -cp build hjStreamServer.hjStreamServer hjStreamServer/movies/silent.dat localhost:6666 config.properties
+java -cp build hjStreamServer hjStreamServer/movies/monsters.dat localhost 6666 config.properties
 ```
 
 **Terminal 2 - UDP Proxy:**
 ```bash
-java -cp build hjUDPproxy.hjUDPproxy localhost:6666 localhost:8888 hjUDPproxy/config.properties
+java -cp build hjUDPproxy
 ```
+(reads `config.properties` from current directory)
 
 **Terminal 3 - Receiver:**
 ```bash
