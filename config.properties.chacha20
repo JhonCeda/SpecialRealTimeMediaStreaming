@@ -1,0 +1,8 @@
+# ChaCha20-Poly1305 Configuration
+# 256-bit key, 12-byte nonce (per-packet), Poly1305 MAC
+# Overhead: 28 bytes per packet (12-byte nonce + 16-byte tag)
+# Note: Requires Java 11+ (GraalVM supports in Java 8+)
+
+encryption.algorithm=chacha20-poly1305
+encryption.key=1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p
+encryption.seed=

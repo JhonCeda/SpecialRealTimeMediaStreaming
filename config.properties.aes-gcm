@@ -1,0 +1,7 @@
+# AES-GCM Configuration
+# 256-bit key, 12-byte IV (per-packet), 128-bit GCM tag
+# Overhead: 28 bytes per packet (12-byte IV + 16-byte tag)
+
+encryption.algorithm=aes-gcm
+encryption.key=0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0
+encryption.seed=

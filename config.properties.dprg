@@ -1,0 +1,10 @@
+# DPRG-XOR Stream Cipher Configuration
+# Uses HMAC-SHA256 DRBG + XOR
+# Key: 256 bits (used as DRBG initialization seed)
+# Seed: 256 bits (optional, used if provided, otherwise key is used as seed)
+# Overhead: 8 bytes per packet (8-byte counter)
+# Supports out-of-order packet reception
+
+encryption.algorithm=dprg-xor
+encryption.key=2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p1q2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p1q
+encryption.seed=3c4d5e6f7g8h9i0j1k2l3m4n5o6p1q2r3c4d5e6f7g8h9i0j1k2l3m4n5o6p1q2r

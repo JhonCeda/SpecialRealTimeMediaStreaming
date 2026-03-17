@@ -1,0 +1,7 @@
+build/
+*.class
+*.jar
+.DS_Store
+output.bin
+test_*.properties
+test_data.bin
